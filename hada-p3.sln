@@ -5,7 +5,7 @@ VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "proWeb", "proWeb.csproj", "{15A17F44-A86D-4441-99F5-7309CB4F1E7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "library", "..\library\library.csproj", "{67C3E1D9-A356-40E2-9995-534323A68454}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "library", "library\library.csproj", "{67C3E1D9-A356-40E2-9995-534323A68454}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using library;
+using System.Collections.Generic;
 
 namespace proWeb
 {
@@ -11,7 +12,18 @@ namespace proWeb
             if (!IsPostBack)
             {
                 lblMessage.Text = "";
+                LoadCategories();
             }
+        }
+
+        private void LoadCategories()
+        {
+            CADCategory cad = new CADCategory();
+            List<ENCategory> categories = cad.ReadAll();
+            ddlCategory.DataSource = categories;
+            ddlCategory.DataTextField = "Name";
+            ddlCategory.DataValueField = "Id";
+            ddlCategory.DataBind();
         }
 
         protected void btnRead_Click(object sender, EventArgs e)
@@ -23,7 +35,7 @@ namespace proWeb
             {
                 txtName.Text = product.Name;
                 txtAmount.Text = product.Amount.ToString();
-                txtPrice.Text = product.Price.ToString("F2");
+                txtPrice.Text = product.Price.ToString("F2", CultureInfo.InvariantCulture);
                 ddlCategory.SelectedValue = product.Category.ToString();
                 txtCreationDate.Text = product.CreationDate.ToString("dd/MM/yyyy HH:mm:ss");
                 lblMessage.Text = "Product loaded successfully.";
@@ -42,7 +54,7 @@ namespace proWeb
                 txtCode.Text = product.Code;
                 txtName.Text = product.Name;
                 txtAmount.Text = product.Amount.ToString();
-                txtPrice.Text = product.Price.ToString("F2");
+                txtPrice.Text = product.Price.ToString("F2", CultureInfo.InvariantCulture);
                 ddlCategory.SelectedValue = product.Category.ToString();
                 txtCreationDate.Text = product.CreationDate.ToString("dd/MM/yyyy HH:mm:ss");
                 lblMessage.Text = "First product loaded.";
@@ -62,7 +74,7 @@ namespace proWeb
                 txtCode.Text = product.Code;
                 txtName.Text = product.Name;
                 txtAmount.Text = product.Amount.ToString();
-                txtPrice.Text = product.Price.ToString("F2");
+                txtPrice.Text = product.Price.ToString("F2", CultureInfo.InvariantCulture);
                 ddlCategory.SelectedValue = product.Category.ToString();
                 txtCreationDate.Text = product.CreationDate.ToString("dd/MM/yyyy HH:mm:ss");
                 lblMessage.Text = "Previous product loaded.";
@@ -82,7 +94,7 @@ namespace proWeb
                 txtCode.Text = product.Code;
                 txtName.Text = product.Name;
                 txtAmount.Text = product.Amount.ToString();
-                txtPrice.Text = product.Price.ToString("F2");
+                txtPrice.Text = product.Price.ToString("F2", CultureInfo.InvariantCulture);
                 ddlCategory.SelectedValue = product.Category.ToString();
                 txtCreationDate.Text = product.CreationDate.ToString("dd/MM/yyyy HH:mm:ss");
                 lblMessage.Text = "Next product loaded.";
@@ -97,14 +109,44 @@ namespace proWeb
         {
             try
             {
-                ENProduct product = new ENProduct(
-                    txtCode.Text.Trim(),
-                    txtName.Text.Trim(),
-                    int.Parse(txtAmount.Text),
-                    float.Parse(txtPrice.Text, CultureInfo.InvariantCulture),
-                    int.Parse(ddlCategory.SelectedValue),
-                    DateTime.ParseExact(txtCreationDate.Text, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture)
-                );
+                string code = txtCode.Text.Trim();
+                string name = txtName.Text.Trim();
+                if (code.Length < 1 || code.Length > 16)
+                {
+                    lblMessage.Text = "Code must be between 1 and 16 characters.";
+                    return;
+                }
+                if (name.Length > 32)
+                {
+                    lblMessage.Text = "Name must not exceed 32 characters.";
+                    return;
+                }
+
+                if (!int.TryParse(txtAmount.Text, out int amount) || amount < 0 || amount > 9999)
+                {
+                    lblMessage.Text = "Amount must be an integer between 0 and 9999.";
+                    return;
+                }
+
+                if (!float.TryParse(txtPrice.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out float price) || price < 0 || price > 9999.99f)
+                {
+                    lblMessage.Text = "Price must be a positive number (max 9999.99).";
+                    return;
+                }
+
+                if (!DateTime.TryParseExact(txtCreationDate.Text, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime creationDate))
+                {
+                    lblMessage.Text = "Invalid date format. Use dd/MM/yyyy HH:mm:ss.";
+                    return;
+                }
+
+                if (!int.TryParse(ddlCategory.SelectedValue, out int category) || category < 0 || category > 3)
+                {
+                    lblMessage.Text = "Invalid category selected.";
+                    return;
+                }
+
+                ENProduct product = new ENProduct(code, name, amount, price, category, creationDate);
 
                 if (product.Create())
                 {
@@ -125,14 +167,44 @@ namespace proWeb
         {
             try
             {
-                ENProduct product = new ENProduct(
-                    txtCode.Text.Trim(),
-                    txtName.Text.Trim(),
-                    int.Parse(txtAmount.Text),
-                    float.Parse(txtPrice.Text, CultureInfo.InvariantCulture),
-                    int.Parse(ddlCategory.SelectedValue),
-                    DateTime.ParseExact(txtCreationDate.Text, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture)
-                );
+                string code = txtCode.Text.Trim();
+                string name = txtName.Text.Trim();
+                if (code.Length < 1 || code.Length > 16)
+                {
+                    lblMessage.Text = "Code must be between 1 and 16 characters.";
+                    return;
+                }
+                if (name.Length > 32)
+                {
+                    lblMessage.Text = "Name must not exceed 32 characters.";
+                    return;
+                }
+
+                if (!int.TryParse(txtAmount.Text, out int amount) || amount < 0 || amount > 9999)
+                {
+                    lblMessage.Text = "Amount must be an integer between 0 and 9999.";
+                    return;
+                }
+
+                if (!float.TryParse(txtPrice.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out float price) || price < 0 || price > 9999.99f)
+                {
+                    lblMessage.Text = "Price must be a positive number (max 9999.99).";
+                    return;
+                }
+
+                if (!DateTime.TryParseExact(txtCreationDate.Text, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime creationDate))
+                {
+                    lblMessage.Text = "Invalid date format. Use dd/MM/yyyy HH:mm:ss.";
+                    return;
+                }
+
+                if (!int.TryParse(ddlCategory.SelectedValue, out int category) || category < 0 || category > 3)
+                {
+                    lblMessage.Text = "Invalid category selected.";
+                    return;
+                }
+
+                ENProduct product = new ENProduct(code, name, amount, price, category, creationDate);
 
                 if (product.Update())
                 {

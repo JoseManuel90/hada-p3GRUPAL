@@ -38,7 +38,7 @@
             </tr>
         </table>
 
-        <!-- Buttons container -->
+        <!-- Botones -->
         <div class="button-container">
             <asp:Button ID="btnRead" runat="server" Text="Read" CssClass="btn-spacing" OnClick="btnRead_Click" />
             <asp:Button ID="btnReadFirst" runat="server" Text="Read First" CssClass="btn-spacing" OnClick="btnReadFirst_Click" />
@@ -49,7 +49,7 @@
             <asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="btn-spacing" OnClick="btnDelete_Click" />
         </div>
 
-        <!-- Message label for errors or confirmations -->
+        <!-- Barra de mensajes de aviso -->
         <asp:Label ID="lblMessage" runat="server" ForeColor="Red"></asp:Label>
     </div>
 

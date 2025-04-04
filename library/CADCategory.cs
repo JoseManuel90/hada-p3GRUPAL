@@ -6,71 +6,71 @@ namespace library
 {
     public class CADCategory
     {
-        private string connectionString;
+        private readonly string _connectionString;
 
         public CADCategory()
         {
-            // revisar 
-            connectionString = System.Configuration.ConfigurationManager
-                            .ConnectionStrings["DatabaseConnectionString"].ConnectionString;
+            _connectionString = System.Configuration.ConfigurationManager
+                              .ConnectionStrings["DatabaseConnectionString"].ConnectionString;
         }
 
         public bool Read(ENCategory en)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (var con = new SqlConnection(_connectionString))
                 {
-                    connection.Open();
-                    SqlCommand command = new SqlCommand(
-                        "SELECT name FROM Categories WHERE id = @id", connection);
+                    con.Open();
+                    var cmd = new SqlCommand(
+                        "SELECT [name] FROM [Categories] WHERE [id] = @id", con);
 
-                    command.Parameters.AddWithValue("@id", en.Id);
+                    cmd.Parameters.AddWithValue("@id", en.Id);
 
-                    SqlDataReader reader = command.ExecuteReader();
-                    if (reader.Read())
+                    using (var dr = cmd.ExecuteReader())
                     {
-                        en.Name = reader["name"].ToString();
-                        return true;
+                        if (dr.Read())
+                        {
+                            en.Name = dr["name"].ToString();
+                            return true;
+                        }
+                        return false;
                     }
-                    return false;
                 }
             }
             catch (SqlException ex)
             {
-                Console.WriteLine("Category operation has failed. Error: {0}", ex.Message);
+                Console.WriteLine($"Error en CADCategory.Read: {ex.Message}");
                 return false;
             }
         }
 
         public List<ENCategory> ReadAll()
         {
-            List<ENCategory> categories = new List<ENCategory>();
-
+            var categories = new List<ENCategory>();
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (var con = new SqlConnection(_connectionString))
                 {
-                    connection.Open();
-                    SqlCommand command = new SqlCommand(
-                        "SELECT id, name FROM Categories ORDER BY id", connection);
+                    con.Open();
+                    var cmd = new SqlCommand(
+                        "SELECT [id], [name] FROM [Categories] ORDER BY [id]", con);
 
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+                    using (var dr = cmd.ExecuteReader())
                     {
-                        ENCategory category = new ENCategory(
-                            Convert.ToInt32(reader["id"]),
-                            reader["name"].ToString());
-
-                        categories.Add(category);
+                        while (dr.Read())
+                        {
+                            categories.Add(new ENCategory(
+                                Convert.ToInt32(dr["id"]),
+                                dr["name"].ToString()
+                            ));
+                        }
                     }
                 }
             }
             catch (SqlException ex)
             {
-                Console.WriteLine("Category operation has failed. Error: {0}", ex.Message);
+                Console.WriteLine($"Error en CADCategory.ReadAll: {ex.Message}");
             }
-
             return categories;
         }
     }

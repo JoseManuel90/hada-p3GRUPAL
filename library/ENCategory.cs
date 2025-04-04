@@ -2,21 +2,21 @@
 {
     public class ENCategory
     {
-        // Atributos privados
-        private int id;
-        private string name;
+        // Atributos privados 
+        private int _id;
+        private string _name;
 
-        // Propiedades públicas con campos de respaldo
+        // Propiedades públicas 
         public int Id
         {
-            get { return id; }
-            set { id = value; }
+            get => _id;
+            set => _id = value;
         }
 
         public string Name
         {
-            get { return name; }
-            set { name = value; }
+            get => _name;
+            set => _name = value;
         }
 
         // Constructores
@@ -24,11 +24,11 @@
 
         public ENCategory(int id, string name)
         {
-            this.id = id;
-            this.name = name;
+            _id = id;
+            _name = name;
         }
 
-        // Métodos para acceso a datos
+        // Métodos 
         public bool Read()
         {
             CADCategory cad = new CADCategory();
@@ -37,8 +37,7 @@
 
         public static List<ENCategory> ReadAll()
         {
-            CADCategory cad = new CADCategory();
-            return cad.ReadAll();
+            return new CADCategory().ReadAll();
         }
     }
 }
